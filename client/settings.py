@@ -1,5 +1,6 @@
 import os.path
 import os
+from django.contrib.messages import constants as message_constants
 from local_settings import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -34,7 +35,7 @@ ROOT_URLCONF = 'cdatweb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(os.path.abspath("."), 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

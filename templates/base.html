@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- for recaptcha -->
+    
+    <title> {% block title %} CDATWeb {% endblock %}</title>
+    
+    {% load staticfiles %}
+    
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}">
+    <link rel="stylesheet" href="{% static "css/cdatweb.css" %}">
+    <link rel="stylesheet" href="{% static "css/main.css" %}">
+    <link rel="stylesheet" href="{% static "css/tile.css" %}">
+    <link rel="stylesheet" href="{% static "css/MetroJs.css" %}">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/velocity/0.2.1/jquery.velocity.min.js'></script> 
+    <script src="{% static "js/cdat.js" %}"></script>
+    <script src="{% static "js/jquery-ui.js" %}"></script>
+    <script src="{% static "js/jquery.hammer.min.js" %}"></script>
+    <script src="{% static "js/spin.min.js" %}"></script> 
+    <script src="{% static "js/lodash.js" %}"></script>
+    <script src="{% static "js/autobahn.min.js" %}"></script>
+    <script src="{% static "js/MetroJs.js" %}"></script>
+    <script src="{% static "js/grid_layouts.js" %}"></script>
+    <script src="{% static "js/vtkweb-all.js" %}"></script>
+    <script src="{% static "js/main.js" %}"></script>
+    <script type="text/javascript">AUTOBAHN_DEBUG = true;</script>
+    <script type="text/javascript">$.widget.bridge('uitooltip', $.ui.tooltip);</script>
+    <script type="text/javascript">cdat.visualization_launcher = "{{ vis_launcher }}";</script>
+
+
+    {% block extra_headers %} {% endblock %}
+
+    <style type="text/css">
+      body {
+        padding-top: 50px;
+      }
+      .starter-template {
+        padding: 40px 15px;
+      }
+      label{
+        min-width: 90px;
+      }
+      .footer{
+        padding: 25px 25px 25px 25px;
+      }
+      .navbar-nav {
+        width: 100%;
+        text-align: center;
+      }
+      .navbar-nav > li {
+        float: none;
+        display: inline-block;
+      }
+      .navbar-nav > li.navbar-right {
+        float: right !important;
+      }
+      .navbar-nav > li.navbar-left {
+        float: left !important;
+      }
+      .theme-showcase {
+        margin-top:1em;
+      }
+    </style>
+
+  </head>
+  <body role="document" class="day">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            {% block nav_new_button %}
+
+            {% endblock %}
+          </button>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            {% block new_button_left_link %}
+
+            {% endblock %}
+            <li id="acme-link"><a href="/">CDATWeb</a></li>
+            {% if user.is_authenticated %}
+            <li class="navbar-right"><a href="/add_credentials">{{ user.username }}</a></li>
+            <li class="navbar-right"><a href="/logout">Log Out</a></li>
+            {% else %}
+            <li class="navbar-right"><a href="/login?next={% url 'index' %}">Welcome Guest</a></li>
+            <li class="navbar-right"><a href="/login?next={% url 'index' %}">Log In</a></li>
+            {% endif %}
+          </ul>
+          
+        </div><!--.nav-collapse -->
+      </div>
+    </div>
+    {% block dropmenu %}
+
+    {% endblock %}
+    
+    <div class="container theme-showcase" role="main">
+      {% if messages %}
+          {% for message in messages %}
+          <div class="alert {% if message.tags %} {{ message.tags }} {% else %} alert-info {% endif %}" role="alert">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+      {% block content %}   
+
+      {% endblock %}
+    </div>
+    <div id="footer" class="footer">
+    <hr>
+      <a href="#">Privacy &amp; Legal Notice</a> &nbsp;
+    </div>
+  </div><!-- /.container -->
+</body>
+</html>
