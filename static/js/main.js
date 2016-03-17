@@ -51,7 +51,7 @@ $(function() {
     console.log(limit);
     var offset =  $("input[id=offset]").val();
 
-    var jsonObj = new Object;
+    var jsonObj = {};
     jsonObj.host = host;
     jsonObj.text = text;
     jsonObj.project = project;
@@ -71,18 +71,15 @@ $(function() {
       data: {query:jsonStr},
       dataType: 'json',
       success: function(data) {
-        results = data.data;
+        var results = data.data;
         console.log(results);
-        stacktop = [];
-        stacktop = results;
         var element = $("<div></div>");
-        if(stacktop.length == 0){
+        if(results.length == 0){
           element.text("No Results");
         }
 
-        for(var x = 0; x < stacktop.length; x++){
-          //console.log(stacktop[x]);
-          obj = stacktop[x];
+        for(var x = 0; x < results.length; x++){
+          var obj = results[x];
           var wrapper =$("<p></p>");
           var eol = "<br/>";
           var split = "<hr>";
@@ -116,7 +113,7 @@ $(function() {
               variable.text(obj.variables[v].name);
             }
             else{
-              _dap = obj.dap
+              var _dap = obj.dap;
               if(_dap.substring(_dap.length - 5, _dap.length) == ".html"){
                 _dap = _dap.substring(0, _dap.length - 5)
               }
@@ -139,12 +136,11 @@ $(function() {
         //newPanel(title, element);
         var new_tile = '<li id="esgf_search_results" class="tile" >' + header1 + title + header2 + header3 + '</li>';
         add_tile(new_tile, 'esgf_search_results' , {ignore: 'true'});
-        $('#esgf_search_results .tile-contents').append(element);
+        $('#esgf_search_results').find('.tile-contents').append(element);
 
       },
       error: function(request, status, error) {
-        $("div .error").html(request + " | " + status + " | " + error);
-        $("div .error").show();
+        $("div .error").html(request + " | " + status + " | " + error).show();
       }
     });
   }
@@ -154,8 +150,7 @@ $(function() {
   var sidebarWidth = ($(window).width() * (1 - widthScale));
   calcMaxSize();
   $('#slide-menu-left').css('width', sidebarWidth);
-  $('.wrapper').height(maxHeight * tileHeight);
-  $('.wrapper').css({
+  $('.wrapper').height(maxHeight * tileHeight).css({
     "width": ($(window).width() * widthScale),
     "float": "right"
   });
@@ -183,7 +178,7 @@ $(function() {
     '     <p style="text-align: center">'
   ].join('');
   // Widget Name
-  header2 = ['     <p>',
+  var header2 = ['     <p>',
     '   </div>',
     '  </div>',
     ' </div>',
@@ -191,23 +186,13 @@ $(function() {
     '  <div class="tile-contents">'
   ].join('');
   // Widget Contents
-  content = '<div class="content"></div>';
+  var content = '<div class="content"></div>';
   header3 += ' </div></div></div>';
 
   var altheader1 = ['<div class="tile-panel panel-default">',
     ' <div class="tile-panel-heading">',
     '  <div class="panel-header-title text-center">',
     '     <p style="text-align: center">'
-  ].join('');
-
-  var velo_context_menu_html = ['<div id="velo_context_menu">',
-    '  <a href="#" id="velo_context_menu_delete">Delete</a>',
-    '  <a href="#" id="velo_context_menu_rename">Rename</a>',
-    '</div>'
-  ].join('');
-  var esgf_context_menu_html = ['<div id="esgf_context_menu">',
-    '  <a href="#" id="esgf_context_menu_search">Search</a>',
-    '</div>'
   ].join('');
 
   var dragStartX = 0;
@@ -231,7 +216,7 @@ $(function() {
   var fixValY = 99;
   var mode = {
     light: 'day'
-  }
+  };
   boardSetup(maxCols, maxHeight);
   var opts = {
     lines: 17, // The number of lines to draw
@@ -280,23 +265,7 @@ $(function() {
     }
   }
 
-  function windowLoadFix() {
-    var needsFixup = true;
-    var alltiles = $('.tile');
-    $('.tile').each(function() {
-      if (parseInt($(this).attr('col')) == 1) {
-        needsFixup == false;
-      }
-    });
-    if (needsFixup) {
-      $('.tile').each(function() {
-        $(this).attr('col') = parsetInt($(this).attr('col')) - 1;
-      });
-    }
-
-  }
-
-  // Remove extra stuff from the header which isnt going to be used from the dashboard 
+  // Remove extra stuff from the header which isnt going to be used from the dashboard
   $('#footer').remove();
   $('#dashboard-link').remove();
   $('#uvcdat-link').remove();
@@ -331,217 +300,13 @@ $(function() {
   });
 
   function getFile(url, id) {
-    $.getScript("static/js/spin.js", function() {
-      if (mode == 'night') {
-        var color = '#fff';
-      } else {
-        color = '#000';
-      }
-      opts.color = color;
-      var spinner = new Spinner(opts).spin();
-      //document.getElementById('velo-text-edit').appendChild(spinner.el);
-      var path = url.split('/');
-      filename = path.pop();
-      var path = path.join('/');
-      data = {
-        'filename': filename,
-        'path': path
-      }
-      get_data('get_file/', 'POST', data, function(response) {
-        spinner.stop();
-        $('#velo-text-edit').empty();
-        if (response.type == 'image') {
-          // var name = 'Image Viewer: ' + id;
-          // var windowId = 'image_viewer_' + imgInstance;
-          var contents = '<div id="velo-image"><img src="/acme/userdata/image/' + response.location + '"></div>'
-          // var new_tile = '<li id="' + windowId + '_window" class="tile" data-path="' + id + '">' + header1 + name + header2 + contents + header3 + '</li>';
-          // add_tile(new_tile, windowId + '_window', {ignore: 'true'});	
-          // imgInstance++;
-          $('#' + id + ' .content').append(contents);
-        }
-        else {
-          initCodeMirror(response.responseText, id, url);
-        }
-      }, function(response) {
-        spinner.stop();
-        alert('Failed to retrieve file from server');
-      });
-    });
+
   }
 
-  function initFileTree(window_id) {
 
-    $.getScript("static/js/spin.js", function() {
-      if (mode == 'night') {
-        var color = '#fff';
-      } else {
-        color = '#000';
-      }
-      opts.color = color;
-      var spinner = new Spinner(opts).spin();
-      if (mode == 'day') {
-        $('#velo-file-tree').css({
-          'background-color': '#FAFFFF'
-        });
-        $('#esgf-node-tree').css({
-          'background-color': '#FAFFFF'
-        });
-        $('#velo-text-edit').css({
-          'background-color': '#f7f7f7'
-        });
-      } else {
-        $('#velo-file-tree').css({
-          'background-color': '#111'
-        });
-        $('#esgf-node-tree').css({
-          'background-color': '#111'
-        });
-        $('#velo-text-edit').css({
-          'background-color': '#141414'
-        });
-      }
-      if (window_id == 'velo_window') {
-        document.getElementById('velo_window').appendChild(spinner.el);
-
-        request = {
-          'file': '/User Documents/'
-        }
-
-        get_data('get_folder/', 'POST', request, function(response) {
-          spinner.stop();
-          response.sort();
-          for (var i = 0; i < response.length; i++) {
-            if (response[i] == '/User Documents/' || response[i] == 'Velo Initialized...') {
-              response.splice(i, 1);
-              i--;
-              continue;
-            }
-            var path = response[i].split('/');
-            var name = path[path.length - 1];
-            if (isFolder(response[i])) {
-              var parentFolder = '/';
-              for (j = 1; j < path.length - 1; j++) {
-                parentFolder += path[j] + '/';
-              }
-              parentFolder = parentFolder.substring(0, parentFolder.length - 1);
-              var parentFolderEl = $('ul[data-path="' + parentFolder + '"]');
-              if (parentFolderEl.length == 0) {
-                $('#velo-mtree.mtree').append('<li class="mtree-root"><a href="#">' + path[path.length - 1] + '</a><ul data-path="' + response[i] + '"></ul></li>');
-                continue;
-              }
-              var folderPath = parentFolder + '/' + path[path.length - 1];
-              var folderName = path[path.length - 1];
-              parentFolderEl.append('<li class="mtree-drag mtree-drop"><a href="#">' + folderName + '</a><ul data-path="' + folderPath + '"></ul></li>');
-
-            } else {
-              parentFolder = '/';
-              for (j = 1; j < path.length - 1; j++) {
-                parentFolder += path[j] + '/';
-              }
-              parentFolder = parentFolder.substring(0, parentFolder.length - 1);
-              $('ul[data-path="' + parentFolder + '"]').append('<li class="mtree-drag mtree-file"><a href="#" data-path="' + response[i] + '">' + path[path.length - 1] + '</a></li>');
-              $('a[data-path="' + response[i] + '"]').addClass('velo-file');
-              $('a[data-path="' + response[i] + '"]').click(function(event) {
-
-                console.log($(event.target).attr('data-path'));
-                var id = 'dashboard_tile_' + instance;
-                var path = $(event.target).attr('data-path');
-                content = '<div class="content"></div>';
-                var new_tile = '<li id="' + id + '" class="tile" data-path="' + path + '" > ' + header1 + path + header2 + content + header3 + '</li>';
-                add_tile(new_tile, id , { ignore: 'true'}, getFile(path, id)); 
-              }); //this is totally not doing what i thought it would, but it works. Pretty sure that getFile
-            }       //is getting called instead of being passed as a callback. 
-          }
-
-          mtree('velo-mtree-container');
-
-          $('#velo-mtree.mtree').bind('contextmenu', function(e) {
-            e.preventDefault();
-            if (e.button == 2) {
-              velo_context_menu(e);
-            }
-          });
-          $('.mtree-drag').draggable({
-            revert: 'invalid',
-            stack: '#velo-mtree-container',
-          });
-          $('.mtree-drop').droppable({
-            drop: function(event, ui) {
-              console.log(event);
-              console.log(ui);
-
-            }
-          });
-        }, function() {
-          spinner.stop();
-          alert('error getting home folder');
-        });
-      } else if (window_id == 'esgf_window') {
-        document.getElementById('esgf_window').appendChild(spinner.el);
-        get_data('node_info/', 'GET', {}, function(response) {
-          spinner.stop();
-          $('#esgf-node-tree').append('<ul class="mtree" id="esgf-mtree"></ul>');
-          var node_array = Object.keys(response);
-          var length = node_array.length;
-          if (length > 10) {
-            length = 10
-          }
-          for (var i = 0; i < length; i++) {
-
-            var node_attrib = Object.keys(response[node_array[i]]['attributes']);
-            //var node_child = Object.keys(response[node_array[i]]['children']);
-            var node_child = 'Node';
-            if (response[node_array[i]]['children'][node_child]) {
-              var host = response[node_array[i]]['children'][node_child]['attributes']['hostname'];
-              $('#esgf-mtree').append('<li><a href="#">' + node_array[i] + '</a><ul data-node="' + host + '"></li>');
-              $('ul[data-node="' + host + '"]').append('<input type="checkbox" class="node-check-box" value="' + host + '">Search Node</input>');
-              for (var j = 0; j < node_attrib.length; j++) {
-                var attribute;
-                var children;
-                if (node_attrib[j] == 'timeStamp') {
-                  var d = new Date(0);
-                  d.setUTCSeconds(response[node_array[i]]['attributes'][node_attrib[j]] / 1000);
-                  attribute = 'date node came online ' + d;
-                } else {
-                  attribute = response[node_array[i]]['attributes'][node_attrib[j]];
-                }
-                children = Object.keys(response[node_array[i]]['children'][node_child]['attributes']);
-
-                $('ul[data-node="' + host + '"]').append('<li><table><tr><td>' + node_attrib[j] + '</td><td style="text-align: right;"> ' + attribute + '</td></tr></table></li>');
-              }
-              for (var k = 0; k < children.length; k++) {
-                if (children[k] == 'timeStamp') {
-                  var d = new Date(0);
-                  d.setUTCSeconds(response[node_array[i]]['children'][node_child]['attributes'][children[k]] / 1000);
-                  attribute = 'node online at ' + d;
-                } else {
-                  attribute = response[node_array[i]]['children'][node_child]['attributes'][children[k]];
-                }
-                $('ul[data-node="' + host + '"]').append('<li><table><tr><td>' + children[k] + '</td><td style="text-align: right;">' + attribute + '</td></tr></table></li>');
-              }
-            }
-          }
-          $('#esgf-mtree.mtree').bind('contextmenu', function(e) {
-            e.preventDefault();
-            if (e.button == 2) {
-              esgf_context_menu(e);
-            }
-          });
-          mtree('esgf-node-tree');
-        }, function(response) {
-          alert('Error getting node list');
-          spinner.stop();
-        });
-      }
-    });
-  }
 
   function isFolder(file) {
-    if (file.split('.').pop() != file) {
-      return false;
-    } else {
-      return true;
-    }
+    return file.split('.').pop() == file;
   }
 
   function populateFile(file) {
@@ -557,9 +322,8 @@ $(function() {
       'opacity': 1
     });
     return $(w);
-  };
-
-  function add_tile(html, id, options, callback) {
+  }
+    function add_tile(html, id, options, callback) {
     $('.tile-holder').append(html);
     var w = $('#' + id);
     $(w).css({
@@ -584,7 +348,7 @@ $(function() {
           'opacity': '0.5',
           'z-index': 10,
           'width': '20%',
-          'height': '20%',
+          'height': '20%'
         });
       },
       stop: function(event, ui) {
@@ -593,13 +357,13 @@ $(function() {
         dragFixup(pos.col, pos.row);
         $(ui.helper).css({
           'opacity': '1.0',
-          'z-index': 1,
+          'z-index': 1
         });
       },
       cursorAt: {
         left: 200,
         top: 15
-      },
+      }
     });
 
     $(w).resizable({
@@ -665,8 +429,8 @@ $(function() {
           tiles.splice(i, 1);
           break;
         }
-      };
-      positionFixup();
+      }
+        positionFixup();
     });
 
     $(w).find('.options').click(function(e) {
@@ -711,13 +475,13 @@ $(function() {
     }
     instance++;
     return $(w);
-  };
-
-  function handleResizeStart(event, ui) {
+    }
+    function handleResizeStart(event, ui) {
     resizeStartX = parseInt(ui.element.attr('col'));
     resizeStartSizeX = parseInt(ui.element.attr('sizex'));
     resizeStartY = parseInt(ui.element.attr('row'));
     resizeStartSizeY = parseInt(ui.element.attr('sizey'));
+    //noinspection FallThroughInSwitchStatementJS
     switch (resizeDir) {
       case 'n':
         $('#' + ui.element.attr('id')).css({
@@ -725,11 +489,15 @@ $(function() {
           '-moz-transition': 'height 200ms easeOutQuint!important',
           '-o-transition': 'height 200ms easeOutQuint!important',
           '-ms-transition': 'height 200ms easeOutQuint!important',
-          'transition': 'height 200ms easeOutQuint!important',
+          'transition': 'height 200ms easeOutQuint!important'
         });
+        break;
       case 's':
+            break;
       case 'e':
+            break;
       case 'w':
+            break;
     }
     event.stopPropagation();
   }
@@ -784,7 +552,7 @@ $(function() {
     var sizex = parseInt(curWindow.attr('sizex'));
     var sizey = parseInt(curWindow.attr('sizey'));
     var toAdd = true;
-    var adj = new Array();
+    var adj = [];
     if (dir == 'up') {
       if (side == 'n') {
         //var adj = new Set();
@@ -800,8 +568,8 @@ $(function() {
           if (toAdd) {
             adj.push(board[i - 1][y - 2].tile);
           }
-        };
-        var helperReturn = adjHelper(adj, moved);
+        }
+          var helperReturn = adjHelper(adj, moved);
         var startY = curWindow.offset().top;
         curWindow.attr({
           'row': y - diff,
@@ -817,7 +585,7 @@ $(function() {
         removeHelper(curWindow);
         if (helperReturn.finished) {
           //base case, done resizing
-          return;
+
         } else {
           //we need to keep resizing
           recursiveResize(moved, dir, diff, 's', helperReturn.adj[0]);
@@ -835,8 +603,8 @@ $(function() {
           if (toAdd) {
             adj.push(board[i - 1][y + sizey - 1].tile);
           }
-        };
-        var helperReturn = adjHelper(adj, moved);
+        }
+          var helperReturn = adjHelper(adj, moved);
         curWindow.attr({
           'sizey': sizey - diff
         });
@@ -848,14 +616,14 @@ $(function() {
         removeHelper(curWindow);
         if (helperReturn.finished) {
           //base case, all windows have been resized
-          return;
+
         } else {
           //we need to keep resizeing 
           recursiveResize(moved, dir, diff, 'n', helperReturn.adj[0]);
         }
       } else {
         //error
-        return
+
       }
     } else if (dir == 'down') {
       if (side == 'n') {
@@ -871,8 +639,8 @@ $(function() {
           if (toAdd) {
             adj.push(board[i - 1][y - 2].tile);
           }
-        };
-        //check the base case-> all windows have been moved
+        }
+          //check the base case-> all windows have been moved
         moved.add(id);
         var helperReturn = adjHelper(adj, moved);
         var startY = curWindow.offset().top;
@@ -890,7 +658,7 @@ $(function() {
         removeHelper(curWindow);
         if (helperReturn.finished) {
           //base case, done resizing
-          return;
+
         } else {
           //we need to keep resizing
           recursiveResize(moved, dir, diff, 's', helperReturn.adj[0]);
@@ -908,8 +676,8 @@ $(function() {
           if (toAdd) {
             adj.push(board[i - 1][y + sizey - 1].tile);
           }
-        };
-        //check the base case-> all windows have been moved
+        }
+          //check the base case-> all windows have been moved
         moved.add(id);
         var helperReturn = adjHelper(adj, moved);
         curWindow.attr({
@@ -923,14 +691,14 @@ $(function() {
         removeHelper(curWindow);
         if (helperReturn.finished == true) {
           //base case, all windows have been resized
-          return;
+
         } else {
           //we need to keep resizeing 
           recursiveResize(moved, dir, diff, 'n', helperReturn.adj[0]);
         }
       } else {
         //error
-        return
+
       }
     } else if (dir == 'right') {
       if (side == 'e') {
@@ -946,20 +714,20 @@ $(function() {
           if (toAdd) {
             adj.push(board[x + sizex - 1][i - 1].tile);
           }
-        };
-        var helperReturn = adjHelper(adj, moved);
+        }
+          var helperReturn = adjHelper(adj, moved);
         curWindow.attr({
           'sizex': sizex - diff
         });
         curWindow.css({
-          'width': (sizex - diff) * tileWidth,
+          'width': (sizex - diff) * tileWidth
         });
         update_board(id);
         moved.add(id);
         removeHelper(curWindow);
         if (helperReturn.finished) {
           //base case, all windows have been resized
-          return;
+
         } else {
           //we need to keep resizeing 
           recursiveResize(moved, dir, diff, 'w', helperReturn.adj[0]);
@@ -977,8 +745,8 @@ $(function() {
           if (toAdd) {
             adj.push(board[x - 2][i - 1].tile);
           }
-        };
-        var helperReturn = adjHelper(adj, moved);
+        }
+          var helperReturn = adjHelper(adj, moved);
         curWindow.attr({
           'col': x - diff,
           'sizex': sizex + diff
@@ -992,14 +760,14 @@ $(function() {
         removeHelper(curWindow);
         if (helperReturn.finished) {
           //base case, all windows have been resized
-          return;
+
         } else {
           //we need to keep resizeing 
           recursiveResize(moved, dir, diff, 'e', helperReturn.adj[0]);
         }
       } else {
         //error
-        return
+
       }
     } else if (dir == 'left') {
       if (side == 'e') {
@@ -1015,20 +783,20 @@ $(function() {
           if (toAdd) {
             adj.push(board[x + sizex - 1][i - 1].tile);
           }
-        };
-        var helperReturn = adjHelper(adj, moved);
+        }
+          var helperReturn = adjHelper(adj, moved);
         curWindow.attr({
           'sizex': sizex - diff
         });
         curWindow.css({
-          'width': (sizex - diff) * tileWidth,
+          'width': (sizex - diff) * tileWidth
         });
         update_board(id);
         moved.add(id);
         removeHelper(curWindow);
         if (helperReturn.finished) {
           //base case, all windows have been resized
-          return;
+
         } else {
           //we need to keep resizeing 
           recursiveResize(moved, dir, diff, 'w', helperReturn.adj[0]);
@@ -1046,8 +814,8 @@ $(function() {
           if (toAdd) {
             adj.push(board[x - 2][i - 1].tile);
           }
-        };
-        var helperReturn = adjHelper(adj, moved);
+        }
+          var helperReturn = adjHelper(adj, moved);
         curWindow.attr({
           'col': x - diff,
           'sizex': sizex + diff
@@ -1061,18 +829,18 @@ $(function() {
         removeHelper(curWindow);
         if (helperReturn.finished) {
           //base case, all windows have been resized
-          return;
+
         } else {
           //we need to keep resizeing 
           recursiveResize(moved, dir, diff, 'e', helperReturn.adj[0]);
         }
       } else {
         //error
-        return;
+
       }
     } else {
       //error
-      return;
+
     }
   }
 
@@ -1102,7 +870,7 @@ $(function() {
           tiles.splice(i, 1);
           break;
         }
-      };
+      }
     }
   }
 
@@ -1120,8 +888,8 @@ $(function() {
         if (board[i - 1][resizeStartY - 2].tile != resizeId) {
           virt_adj.add(board[i - 1][resizeStartY - 2].tile);
         }
-      };
-      //did it go up or down?
+      }
+        //did it go up or down?
       $(ui.element).attr({
         'row': parseInt(ui.element.attr('row')) - diff,
         'sizey': parseInt(ui.element.attr('sizey')) + diff
@@ -1152,8 +920,8 @@ $(function() {
         if (board[i - 1][resizeStartY + resizeStartSizeY - 1].tile != resizeId) {
           virt_adj.add(board[i - 1][resizeStartY + resizeStartSizeY - 1].tile);
         }
-      };
-      //did it go up or down?
+      }
+        //did it go up or down?
       $(ui.element).attr({
         'sizey': parseInt(ui.element.attr('sizey')) - diff
       });
@@ -1182,8 +950,8 @@ $(function() {
         if (board[resizeStartX + resizeStartSizeX - 1][i - 1].tile != resizeId) {
           horz_adj.add(board[resizeStartX + resizeStartSizeX - 1][i - 1].tile);
         }
-      };
-      //did it go right or left?
+      }
+        //did it go right or left?
       var diff = horizontal_location(ui.originalPosition.left, ui.originalSize.width) - horizontal_location(ui.helper.position().left, ui.helper.width());
       ui.element.attr({
         'sizex': parseInt(ui.element.attr('sizex')) - diff
@@ -1213,8 +981,8 @@ $(function() {
         if (board[resizeStartX - 2][i - 1].tile != resizeId) {
           horz_adj.add(board[resizeStartX - 2][i - 1].tile);
         }
-      };
-      //did it go right or left?
+      }
+        //did it go right or left?
       var diff = horizontal_location(ui.originalPosition.left, 0) - horizontal_location(ui.helper.position().left, 0);
       ui.element.attr({
         'col': parseInt(ui.element.attr('col')) - diff,
@@ -1261,7 +1029,7 @@ $(function() {
       console.log( t.attr('sizex') * tileWidth);
       console.log( t.attr('sizey') * tileHeight );
       update_board(tiles[i]);
-    };
+    }
   }
 
   function update_board(id) {
@@ -1270,8 +1038,8 @@ $(function() {
       for (var j = parseInt(t.attr('row')) - 1; j < parseInt(t.attr('row')) + parseInt(t.attr('sizey')) - 1; j++) {
         board[k][j].occupied = 1;
         board[k][j].tile = id;
-      };
-    };
+      }
+    }
   }
 
   function offset_from_location(row, col) {
@@ -1289,11 +1057,12 @@ $(function() {
       return;
     }
     var targetId = board[col - 1][row - 1].tile;
-    var targetX = parseInt($('#' + targetId).attr('col'));
-    var targetY = parseInt($('#' + targetId).attr('row'));
-    var targetSizeX = parseInt($('#' + targetId).attr('sizex'));
-    var targetSizeY = parseInt($('#' + targetId).attr('sizey'));
-    var targetGrid = $('#' + targetId);
+    var thisTarget = $('#' + targetId);
+    var targetX = parseInt(thisTarget.attr('col'));
+    var targetY = parseInt(thisTarget.attr('row'));
+    var targetSizeX = parseInt(thisTarget.attr('sizex'));
+    var targetSizeY = parseInt(thisTarget.attr('sizey'));
+    var targetGrid = thisTarget;
     var startGrid = $('#' + dragStartId);
     if (targetId == dragStartId) {
       var targetOffset = offset_from_location(row, col);
@@ -1335,13 +1104,12 @@ $(function() {
       update_board(targetId);
     }
   }
-
-  function grid_from_offset(pos) {
-    var location = {
+    function grid_from_offset(pos) {
+    var thisLocatiion = {
       col: Math.floor(pos.left / tileWidth) + 1,
       row: Math.floor(pos.top / tileHeight) + 1
-    }
-    return location;
+    };
+    return thisLocation;
   }
 
   function horizontal_location(x, sizex) {
@@ -1368,7 +1136,7 @@ $(function() {
     layout.y = checkZero(Math.round(layout.y * maxHeight));
     layout.sizex = checkZero(Math.round(layout.sizex * maxCols));
     layout.sizey = checkZero(Math.round(layout.sizey * maxHeight));
-    var diff = layout.x + layout.sizex - 1 - maxCols
+    var diff = layout.x + layout.sizex - 1 - maxCols;
     if (diff > 0) {
       layout.sizex -= diff;
     }
@@ -1386,7 +1154,7 @@ $(function() {
     } else if (mode == 'night') {
       setNight();
     }
-    mode.light = mode
+    mode.light = mode;
 
     for (var i = 0; i < layout.length; i++) {
       var name = layout[i].tileName;
@@ -1498,7 +1266,7 @@ $(function() {
           y: parseInt(curTile.attr('row')),
           sizex: parseInt(curTile.attr('sizex')),
           sizey: parseInt(curTile.attr('sizey'))
-        })
+        });
         curTile.attr({
           'col': layout.y,
           'row': layout.x,
@@ -1519,14 +1287,14 @@ $(function() {
 
   function checkZero(val) {
     if (val == 0)
-      return 1
+      return 1;
     else
       return val
   }
 
   function boardSetup(cols, height) {
     //i = cols, j = rows
-    board = new Array(cols + 1);
+    var board = new Array(cols + 1);
     //setup the empty board
     for (var i = board.length - 1; i >= 0; i--) {
       board[i] = new Array(height + 1);
@@ -1593,8 +1361,8 @@ $(function() {
     // var jsonObj = new Object;®
     // jsonObj.result = '';
     // jsonObj.data = '';
-    data = JSON.stringify(jsonObj);
-    var ajax_obj = $.ajax({
+    var data = JSON.stringify(jsonObj);
+    var csrf_ajax_obj = $.ajax({
       type: type,
       url: url,
       data: data,
@@ -1613,12 +1381,11 @@ $(function() {
           success_callback(request);
           return;
         }
-        var errorObj = new Object;
+        var errorObj = {};
         errorObj.request = request;
         errorObj.status = status;
         errorObj.error = error;
-        var errorStr = JSON.stringify(errorObj);
-        jsonObj.data = errorStr;
+        jsonObj.data = JSON.stringify(errorObj);
         console.log(jsonObj);
         fail_callback(status);
 
@@ -1661,7 +1428,7 @@ $(function() {
       // Get node elements, and add classes for styling
       var node = $('#' + id + ' .mtree li:has(ul)');
       node.each(function(index, val) {
-        $(this).children(':first-child').css('cursor', 'pointer')
+        $(this).children(':first-child').css('cursor', 'pointer');
         $(this).addClass('mtree-node mtree-' + ((collapsed) ? 'closed' : 'open'));
         $(this).children('ul').addClass('mtree-level-' + ($(this).parentsUntil($('#' + id + ' ul.mtree'), 'ul').length + 1));
       });

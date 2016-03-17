@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 try:
-    from cdatweb.settings.local_settings import base_path
+    from local_settings import base_path
 except ImportError:
     base_path = 'tmp/data'
     _browser_help = (
@@ -76,7 +76,18 @@ def render_template(request, template, context):
     return template.render(context)
 
 def index(request):
-    return HttpResponse(render_template(request, "cdatweb/dashboard.html", {}))
+    data = {}
+    data['base'] = base_path
+
+    data['files'] = [
+        f for f in os.listdir(base_path)
+        if not os.path.isdir(os.path.join(base_path, f))
+    ]
+    data['dirs'] = [
+        f for f in os.listdir(base_path)
+        if os.path.isdir(os.path.join(base_path, f))
+    ]
+    return HttpResponse(render_template(request, "cdatweb/dashboard.html", data))
 
 def user_login(request):
     return HttpResponse("login")
