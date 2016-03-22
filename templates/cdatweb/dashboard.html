@@ -21,11 +21,13 @@
     <div id="plot_types" class="submenu">
       Plot Types <hr>
     </div>
-    <div id="esgf_search" class="submenu">
+    <div id="wps" class="submenu">
+      WPS <hr>
+    </div>
+    <div id="esgf_search" class="submenu" style="display: none">
       <div class="vtk-search-container">
         <!-- esgf search component -->
         <div id="search">
-
           <h2>ESGF Search</h2>
           {% csrf_token %}
           <select type="text" name="host" value="" id="host" class="form-control">
@@ -54,12 +56,12 @@
 
           <div class="alert-sm alert-warning" role="alert">Start at this result</div>
           <button id="cdat_esgf_submit" class="btn btn-success">Search</button>
+          <button type="button" class="btn menu-btn slide-btn" id="hide_esgf_form">
+            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+          </button>
         </div>
       </div>
       <hr>
-    </div>
-    <div id="wps" class="submenu">
-      WPS <hr>
     </div>
     <li>
       <button type="button" class="btn menu-btn slide-btn" id="new_plot">

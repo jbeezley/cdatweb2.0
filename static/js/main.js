@@ -264,16 +264,8 @@ $(function() {
       }
     }
   }
-
-  // Remove extra stuff from the header which isnt going to be used from the dashboard
-  $('#footer').remove();
-  $('#dashboard-link').remove();
-  $('#uvcdat-link').remove();
-  $('#glubus-link').remove();
-  $('#classic-link').remove();
-  $('#cdatweb-link').remove();
   var counter = 0;
-
+  
   $(document).ready(function() {
     //MATT
     $('#new_plot').click(function(){
@@ -282,6 +274,13 @@ $(function() {
       counter = counter + 1;
     });
     $('#cdat_esgf_submit').click(function(){esgf_search_submit()});
+    $('#show_esgf_form').click(function(){
+        $('#esgf_search').show();
+    });
+    $('#hide_esgf_form').click(function(){
+        $('#esgf_search').hide();
+    });
+    
   });
 
   //setup the hander to fix the windows after a resize
@@ -1294,7 +1293,7 @@ $(function() {
 
   function boardSetup(cols, height) {
     //i = cols, j = rows
-    var board = new Array(cols + 1);
+    board = new Array(cols + 1);
     //setup the empty board
     for (var i = board.length - 1; i >= 0; i--) {
       board[i] = new Array(height + 1);

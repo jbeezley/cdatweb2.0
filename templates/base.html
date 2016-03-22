@@ -58,7 +58,6 @@
         text-align: center;
       }
       .navbar-nav > li {
-        float: none;
         display: inline-block;
       }
       .navbar-nav > li.navbar-right {
@@ -93,6 +92,7 @@
 
             {% endblock %}
             <li id="acme-link"><a href="/">CDATWeb</a></li>
+            <li id="esgf-link"><a id="show_esgf_form">Search</a></li>
             {% if user.is_authenticated %}
             <li class="navbar-right"><a href="/add_credentials">{{ user.username }}</a></li>
             <li class="navbar-right"><a href="/logout">Log Out</a></li>
