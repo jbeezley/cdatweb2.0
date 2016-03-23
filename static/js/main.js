@@ -359,10 +359,13 @@ $(function() {
             add_tile(new_tile, counter, { ignore: 'true' } /* , call back function here */);
             counter = counter + 1;
         });
+        
         $('#cdat_esgf_submit').click(function() { esgf_search_submit() });
+        
         $('#show_esgf_form').click(function() {
             $('#esgf_search').show();
         });
+        
         $('#hide_esgf_form').click(function() {
             $('#esgf_search').hide();
         });
