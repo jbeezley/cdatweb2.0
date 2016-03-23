@@ -53,7 +53,22 @@
                 <center>
                     <h5>WPS</h5></center>
                 <ul class="qtree">
-                    
+
+                </ul>
+            </div>
+            <hr>
+        </div>
+        <!-- Examples -->
+        <div id="examples" class="submenu">
+            <div class="cdatweb-examples cdatweb-tree">
+                <center>
+                    <h5>Examples</h5></center>
+                <ul>
+                    <li><a onclick="cdat.create_plot('http://test.opendap.org/opendap/data/nc/coads_climatology.nc', 'SST', 'isofill', 'robinson', 'no_legend')"
+                        href="javascript:void(0)">Isofill example</a></li>
+                    <!-- Need a 3D variable for this: <li><a onclick="cdat.create_plot('http://test.opendap.org/opendap/data/nc/coads_climatology.nc', 'AIRT', '3d_scalar', 'default', 'default')" href="javascript:void(0)">Volume example</a></li> -->
+                    <li><a onclick="cdat.create_plot('http://test.opendap.org/opendap/data/nc/coads_climatology.nc', ['UWND', 'VWND'], 'vector', 'default', 'default')"
+                        href="javascript:void(0)">Vector example</a></li>
                 </ul>
             </div>
             <hr>
@@ -62,7 +77,8 @@
         <div id="esgf_search" class="submenu" style="display: none">
             <div class="vtk-search-container">
                 <div id="search">
-                    <center><h5>ESGF Search</h5></center> {% csrf_token %}
+                    <center>
+                        <h5>ESGF Search</h5></center> {% csrf_token %}
                     <select type="text" name="host" value="" id="host" class="form-control">
                         <!-- Load from node-manager once installed again -->
                         <option value="http://pcmdi.llnl.gov/esg-search">LLNL</option>

@@ -363,7 +363,7 @@ $(function() {
         $('#cdat_esgf_submit').click(function() { esgf_search_submit() });
         
         $('#show_esgf_form').click(function() {
-            $('#esgf_search').show();
+            $('#esgf_search').toggle();
         });
         
         $('#hide_esgf_form').click(function() {

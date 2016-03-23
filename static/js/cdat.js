@@ -295,7 +295,7 @@
             );
 
             cdat.make_panel(
-                $('<div/>').get(0),
+                 $('<div/>').get(0),
                 null,
                 {
                     selector: '.vtk-view-container',
