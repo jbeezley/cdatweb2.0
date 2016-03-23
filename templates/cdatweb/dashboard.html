@@ -1,86 +1,117 @@
-{% extends "base.html" %}
-{% block title %} CDATWeb {% endblock %}
-
-{% block extra_headers %}
+{% extends "base.html" %} {% block title %} CDATWeb {% endblock %} {% block extra_headers %}
 <style>
-.submenu {
-  background-color: white;
-}
-.alert-sm{
-  margin-bottom: 10px;
-}
+    .submenu {
+        background-color: white;
+    }
+    
+    .alert-sm {
+        margin-bottom: 10px;
+    }
 </style>
-{% endblock %}
-{% block dropmenu %}
+{% endblock %} {% block dropmenu %}
 
 <nav class="menu" id="slide-menu-left" style="top: 50px; z-index:22;">
-  <ul id="side-menu">
-    <div id="server_data" class="submenu">
-      Server Data <hr>
-    </div>
-    <div id="plot_types" class="submenu">
-      Plot Types <hr>
-    </div>
-    <div id="wps" class="submenu">
-      WPS <hr>
-    </div>
-    <div id="esgf_search" class="submenu" style="display: none">
-      <div class="vtk-search-container">
-        <!-- esgf search component -->
-        <div id="search">
-          <h2>ESGF Search</h2>
-          {% csrf_token %}
-          <select type="text" name="host" value="" id="host" class="form-control">
-            <!-- Load from node-manager once installed again -->
-            <option value="http://pcmdi.llnl.gov/esg-search">LLNL</option>
-            <option value="http://esgf-node.jpl.nasa.gov/esg-search">JPL</option>
-            <option value="http://esg.ccs.ornl.gov/esg-search">ORNL</option>
-          </select>
-          <div class="alert-sm alert-warning" role="alert">Select Node</div>
-
-          <input type="text" name="text" value="" id="text" class="form-control" placeholder="Text">
-          <div class="alert-sm alert-warning" role="alert">A free text search query in any metadata field</div>
-
-          <input type="text" name="project" value="" id="project" class="form-control" placeholder="Project Name">
-          <div class="alert-sm alert-warning" role="alert">Search by project</div>
-
-          <select type="text" name="limit" value="" id="limit" class="form-control" placeholder="Limit">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>  
-          <div class="alert-sm alert-warning" role="alert">The maximum number of files to return</div>
-
-          <input type="number" name="offset" value="" id="offset" class="form-control" placeholder="Off Set">
-
-          <div class="alert-sm alert-warning" role="alert">Start at this result</div>
-          <button id="cdat_esgf_submit" class="btn btn-success">Search</button>
-          <button type="button" class="btn menu-btn slide-btn" id="hide_esgf_form">
-            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-          </button>
+    <ul id="side-menu">
+        <!-- Server Data -->
+        <div id="server_data" class="submenu">
+            <div class="cdatweb-file-browser cdatweb-tree">
+                <center>
+                    <h5>Server Data</h5></center>
+                <ul class="qtree">
+                    {% for folder in dirs%}
+                    <li id="{{folder}}"><a class="cdatweb-dir" data-path="{{base}}/{{folder}}"> {{folder}} </a>
+                        <ul id="{{folder}}_child"></ul>
+                    </li>
+                    {% endfor %} {% for folder in files%}
+                    <li id="{{folder}}"><a class="cdatweb-file" data-path="{{base}}/{{folder}}"> {{folder}} </a>
+                        <ul id="{{folder}}_child"></ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <hr>
         </div>
-      </div>
-      <hr>
-    </div>
-    <li>
-      <button type="button" class="btn menu-btn slide-btn" id="new_plot">
-        Plot <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-      </button>
-    </li>
-  </ul>
-  <br>
-  <!-- <button type="button" class="btn menu-btn" id="dark-mode-toggle">Dark mode is off</button> -->
-</nav> <!-- Nav left menu -->
+        <!-- Plot Types -->
+        <div id="plot_types" class="submenu">
+            <div class="cdatweb-plot-selectors cdatweb-tree">
+                <center>
+                    <h5>Plot Types</h5></center>
+                <ul class="qtree">
+                    <li><a>Graphic Methods</a>
+                        <ul class="cdatweb-plot-types"></ul>
+                    </li>
+                    <li><a>Templates</a>
+                        <ul class="cdatweb-plot-templates"></ul>
+                    </li>
+                </ul>
+            </div>
+            <hr>
+        </div>
+        <!-- WPS -->
+        <div id="wps" class="submenu">
+            <div class="cdatweb-wps cdatweb-tree">
+                <center>
+                    <h5>WPS</h5></center>
+                <ul class="qtree">
+                    
+                </ul>
+            </div>
+            <hr>
+        </div>
+        <!-- ESGF Search -->
+        <div id="esgf_search" class="submenu" style="display: none">
+            <div class="vtk-search-container">
+                <div id="search">
+                    <center><h5>ESGF Search</h5></center> {% csrf_token %}
+                    <select type="text" name="host" value="" id="host" class="form-control">
+                        <!-- Load from node-manager once installed again -->
+                        <option value="http://pcmdi.llnl.gov/esg-search">LLNL</option>
+                        <option value="http://esgf-node.jpl.nasa.gov/esg-search">JPL</option>
+                        <option value="http://esg.ccs.ornl.gov/esg-search">ORNL</option>
+                    </select>
+                    <div class="alert-sm alert-warning" role="alert">Select Node</div>
+
+                    <input type="text" name="text" value="" id="text" class="form-control" placeholder="Text">
+                    <div class="alert-sm alert-warning" role="alert">A free text search query in any metadata field</div>
+
+                    <input type="text" name="project" value="" id="project" class="form-control" placeholder="Project Name">
+                    <div class="alert-sm alert-warning" role="alert">Search by project</div>
+
+                    <select type="text" name="limit" value="" id="limit" class="form-control" placeholder="Limit">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <div class="alert-sm alert-warning" role="alert">The maximum number of files to return</div>
+
+                    <input type="number" name="offset" value="" id="offset" class="form-control" placeholder="Off Set">
+
+                    <div class="alert-sm alert-warning" role="alert">Start at this result</div>
+                    <button id="cdat_esgf_submit" class="btn btn-success">Search</button>
+                    <button type="button" class="btn menu-btn slide-btn" id="hide_esgf_form">
+                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+            <hr>
+        </div>
+        <li>
+            <button type="button" class="btn menu-btn slide-btn" id="new_plot">
+                Plot <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+        </li>
+    </ul>
+    <br>
+    <!-- <button type="button" class="btn menu-btn" id="dark-mode-toggle">Dark mode is off</button> -->
+</nav>
+<!-- Nav left menu -->
 
 <div class="wrapper" id="wrapper">
-  <div class="tile-board">
-    <ul class="tile-holder">
-    </ul>
-  </div>
-</div> 
+    <div class="tile-board">
+        <ul class="tile-holder">
+        </ul>
+    </div>
+</div>
 
-{% endblock %}
-
-{% block content %}  
-{% endblock %}
+{% endblock %} {% block content %} {% endblock %}
