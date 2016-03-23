@@ -298,7 +298,7 @@
                  $('<div/>').get(0),
                 null,
                 {
-                    selector: '.vtk-view-container',
+                    selector: '#tile-board',
                     title: '<span><i class="fa fa-picture-o"></i>' + variable + '</span>',
                     size: {width: 500, height: 500},
                     overflow: 'hidden',

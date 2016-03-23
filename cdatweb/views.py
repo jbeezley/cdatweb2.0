@@ -41,7 +41,7 @@ def index(request):
     return HttpResponse(render_template(request, "cdatweb/dashboard.html", data))
 
 def user_login(request):
-    return HttpResponse("login")
+    return HttpResponse(render_template(request, "cdatweb/cdat.html", {}))
 
 def user_logout(request):
     return HttpResponse("logout")

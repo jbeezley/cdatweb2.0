@@ -58,21 +58,6 @@
             </div>
             <hr>
         </div>
-        <!-- Examples -->
-        <div id="examples" class="submenu">
-            <div class="cdatweb-examples cdatweb-tree">
-                <center>
-                    <h5>Examples</h5></center>
-                <ul>
-                    <li><a onclick="cdat.create_plot('http://test.opendap.org/opendap/data/nc/coads_climatology.nc', 'SST', 'isofill', 'robinson', 'no_legend')"
-                        href="javascript:void(0)">Isofill example</a></li>
-                    <!-- Need a 3D variable for this: <li><a onclick="cdat.create_plot('http://test.opendap.org/opendap/data/nc/coads_climatology.nc', 'AIRT', '3d_scalar', 'default', 'default')" href="javascript:void(0)">Volume example</a></li> -->
-                    <li><a onclick="cdat.create_plot('http://test.opendap.org/opendap/data/nc/coads_climatology.nc', ['UWND', 'VWND'], 'vector', 'default', 'default')"
-                        href="javascript:void(0)">Vector example</a></li>
-                </ul>
-            </div>
-            <hr>
-        </div>
         <!-- ESGF Search -->
         <div id="esgf_search" class="submenu" style="display: none">
             <div class="vtk-search-container">
@@ -124,10 +109,15 @@
 <!-- Nav left menu -->
 
 <div class="wrapper" id="wrapper">
-    <div class="tile-board">
+    <div id="tile-board" class="tile-board">
         <ul class="tile-holder">
         </ul>
     </div>
 </div>
+
+<nav class="menu" id="slide-menu-right" style="top: 50px; z-index:22;">
+    <ul id="side-menu">
+        </ul>
+        </nav>
 
 {% endblock %} {% block content %} {% endblock %}
