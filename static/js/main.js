@@ -15,9 +15,8 @@ $(function() {
      */
     function make_draggable(node, ondrag) {
         node.draggable({
-            appendTo: '.vtk-view-container',
+            appendTo: 'body',
             zIndex: ~(1 << 31), // because jsPanel, sigh...
-            containment: '.vtk-view-container',
             helper: "clone",
             addClass: "cdat-grabbing",
             opacity: 0.75
